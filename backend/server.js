@@ -202,6 +202,16 @@ const server = createServer(async (request, response) => {
   }
 });
 
+server.on("error", async (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`Could not start the backend: port ${port} is already in use. Stop the other process or set PORT in backend/.env.`);
+  } else {
+    console.error(`Could not start the backend: ${error.message}`);
+  }
+  await mongoose.disconnect().catch(() => {});
+  process.exitCode = 1;
+});
+
 async function start() {
   if (!mongoUri) {
     throw new Error("MONGODB_URI is missing. Copy .env.example to .env and add your MongoDB connection string.");

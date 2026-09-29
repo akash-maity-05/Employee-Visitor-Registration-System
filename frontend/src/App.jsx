@@ -189,7 +189,7 @@ export default function App() {
             <DoorOpen size={20} strokeWidth={2.2} />
           </span>
           <span>
-            frontdesk<span className="brand-dot">.</span>
+            Entrydesk<span className="brand-dot">.</span>
           </span>
         </a>
         <div className="workspace-label">WORKSPACE</div>
