@@ -4,7 +4,7 @@ A visitor register with a React frontend, a Node.js API, and MongoDB storage.
 
 ## Requirements
 
-- Node.js 18 or newer
+- Node.js 20.19 or newer (or 22.12 or newer), as required by the frontend build tools
 - A MongoDB Atlas database (or another reachable MongoDB server)
 
 ## Configure MongoDB
