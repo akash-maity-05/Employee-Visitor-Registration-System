@@ -8,9 +8,7 @@ import {
   ChevronDown,
   Clock3,
   DoorOpen,
-  Download,
   Ellipsis,
-  FileText,
   Search,
   ShieldCheck,
   Sparkles,
@@ -74,15 +72,35 @@ export default function App() {
   useEffect(() => {
     refreshData().catch((error) => setConnectionError(error.message)).finally(() => setLoading(false));
   }, []);
-  const todayCount = visitors.filter((v) => isToday(v.date)).length;
+  const { todayCount, mostRequestedPerson } = useMemo(() => {
+    const today = new Date().toDateString();
+    let todayCount = 0;
+    const peopleCounts = new Map();
+
+    for (const visitor of visitors) {
+      if (new Date(visitor.date).toDateString() === today) todayCount += 1;
+      peopleCounts.set(visitor.person, (peopleCounts.get(visitor.person) || 0) + 1);
+    }
+
+    let mostRequestedPerson = "—";
+    let highestCount = 0;
+    for (const [person, count] of peopleCounts) {
+      if (count > highestCount) {
+        mostRequestedPerson = person;
+        highestCount = count;
+      }
+    }
+
+    return { todayCount, mostRequestedPerson };
+  }, [visitors]);
   const filtered = useMemo(
-    () =>
-      visitors.filter((v) => {
-        const matchesQuery = `${v.name} ${v.mobile}`
-          .toLowerCase()
-          .includes(query.toLowerCase());
+    () => {
+      const normalizedQuery = query.toLowerCase();
+      return visitors.filter((v) => {
+        const matchesQuery = `${v.name} ${v.mobile}`.toLowerCase().includes(normalizedQuery);
         return matchesQuery && (filter === "All visitors" || isToday(v.date));
-      }),
+      });
+    },
     [visitors, query, filter],
   );
   const notify = (message) => {
@@ -338,19 +356,7 @@ export default function App() {
                   <Building2 size={17} />
                 </span>
               </div>
-              <div className="stat-value stat-name">
-                {visitors.length
-                  ? Object.entries(
-                      visitors.reduce(
-                        (counts, v) => ({
-                          ...counts,
-                          [v.person]: (counts[v.person] || 0) + 1,
-                        }),
-                        {},
-                      ),
-                    ).sort((a, b) => b[1] - a[1])[0]?.[0] || "—"
-                  : "—"}
-              </div>
+              <div className="stat-value stat-name">{mostRequestedPerson}</div>
               <div className="stat-foot">Most requested in your register</div>
               <div className="stat-watermark orange">
                 <Sparkles size={55} strokeWidth={1} />
