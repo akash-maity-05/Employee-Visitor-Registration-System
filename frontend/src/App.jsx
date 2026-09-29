@@ -17,8 +17,9 @@ import {
 } from "lucide-react";
 
 const blank = { name: "", mobile: "", company: "", person: "", purpose: "" };
+const apiBaseUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 const api = async (path, options = {}) => {
-  const response = await fetch(`/api${path}`, {
+  const response = await fetch(`${apiBaseUrl}/api${path}`, {
     ...options,
     headers: { "Content-Type": "application/json", ...options.headers },
   });
